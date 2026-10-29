@@ -1,0 +1,10 @@
+.env
+.env.local
+*.exe
+expense-tracker
+expense-tracker.exe
+vendor/
+.vscode/
+.idea/
+*.log
+Thumbs.db
