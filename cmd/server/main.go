@@ -8,22 +8,30 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"github.com/mahipalpanwar-7/expense-tracker/internal/config"
 )
 
 func main() {
 	// Load env file
-	godotenv.Load()
+	err := godotenv.Load()
+	if err!=nil{
+		log.Println(".env file not found")
+	}
 
+	// Connect databse 
+	config.ConnectDB()
+
+    // getting port 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 
 	// Create gin router
-	r := gin.Default()
+	router := gin.Default()
 
 	// Test route
-	r.GET("/", func(c *gin.Context) {
+	router.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "Expense Tracker API is running",
 			"status":  "ok",
@@ -31,16 +39,17 @@ func main() {
 	})
 
 	// Health check route
-	r.GET("/health", func(c *gin.Context) {
+	router.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"status": "server is healthy",
+			"database": "database is connected",
 		})
 	})
 
 	fmt.Printf("Server running on http://localhost:%s\n", port)
 
 	// Start server
-	if err := r.Run(":" + port); err != nil {
+	if err := router.Run(":" + port); err != nil {
 		log.Fatal("Failed to start server:", err)
 	}
 }
